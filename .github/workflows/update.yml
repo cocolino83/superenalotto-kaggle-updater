@@ -31,9 +31,3 @@ jobs:
 
       - name: 🚀 Esegui lo script Python
         run: python main.py
-
-          echo "${{ secrets.KAGGLE_JSON }}" > ~/.kaggle/kaggle.json
-          chmod 600 ~/.kaggle/kaggle.json
-
-      - name: Esegui script aggiornamento
-        run: python main.py
