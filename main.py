@@ -5,10 +5,11 @@ from bs4 import BeautifulSoup
 from kaggle.api.kaggle_api_extended import KaggleApi
 import datetime
 
-# === Step 0: Scrive il file kaggle.json a partire dalla variabile d'ambiente ===
+# === Step 0: Scrive il file kaggle.json dalla variabile d'ambiente ===
 kaggle_secret = os.environ.get("KAGGLE_JSON")
 if not kaggle_secret:
     raise ValueError("❌ ERRORE: Variabile d'ambiente KAGGLE_JSON non trovata")
+
 kaggle_path = os.path.expanduser("~/.kaggle")
 os.makedirs(kaggle_path, exist_ok=True)
 with open(os.path.join(kaggle_path, "kaggle.json"), "w") as f:
@@ -22,8 +23,7 @@ soup = BeautifulSoup(response.text, "html.parser")
 
 # === Step 2: Estrai la tabella in un DataFrame ===
 table = soup.find("table")
-# usa lxml o html5lib come parser
-df_html = pd.read_html(str(table))[0] :contentReference[oaicite:0]{index=0}
+df_html = pd.read_html(str(table))[0]
 
 # Assegna dinamicamente i nomi delle colonne
 col_names = [
@@ -31,7 +31,7 @@ col_names = [
     "1°", "2°", "3°", "4°", "5°", "6°",
     "J", "SS"
 ]
-df_html.columns = col_names[: df_html.shape[1]]  :contentReference[oaicite:1]{index=1}
+df_html.columns = col_names[:df_html.shape[1]]
 df_html["Data estr."] = pd.to_datetime(df_html["Data estr."], dayfirst=True)
 
 # === Step 3: Carica dataset esistente ===
@@ -47,13 +47,13 @@ df_nuove = df_html[df_html["Data estr."] > ultima_data]
 
 if not df_nuove.empty:
     df_updated = pd.concat([df_existing, df_nuove], ignore_index=True)
-    df_updated.to_csv("estrazioni.csv", index=False) :contentReference[oaicite:2]{index=2}
-    df_updated.to_html("estrazioni.html", index=False) :contentReference[oaicite:3]{index=3}
+    df_updated.to_csv("estrazioni.csv", index=False)
+    df_updated.to_html("estrazioni.html", index=False)
     print(f"✅ Aggiornato con {len(df_nuove)} nuove righe")
-    
+
     # === Step 5: Pubblica su Kaggle ===
     api = KaggleApi()
-    api.authenticate() :contentReference[oaicite:4]{index=4}
+    api.authenticate()
     api.dataset_create_version(
         folder=".",
         version_notes=f"Aggiornamento automatico {datetime.datetime.now():%Y-%m-%d}",
