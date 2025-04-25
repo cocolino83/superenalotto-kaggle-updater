@@ -25,6 +25,12 @@ soup = BeautifulSoup(response.text, "html.parser")
 table = soup.find("table")
 df_html = pd.read_html(str(table))[0]
 
+- name: Configura Kaggle credentials
+  run: |
+    mkdir -p ~/.kaggle
+    echo "$KAGGLE_JSON" > ~/.kaggle/kaggle.json
+    chmod 600 ~/.kaggle/kaggle.json
+
 # Assegna dinamicamente i nomi delle colonne
 col_names = [
     "N. conc.", "Data estr.",
