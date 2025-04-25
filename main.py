@@ -25,12 +25,6 @@ soup = BeautifulSoup(response.text, "html.parser")
 table = soup.find("table")
 df_html = pd.read_html(str(table))[0]
 
-- name: Configura Kaggle credentials
-  run: |
-    mkdir -p ~/.kaggle
-    echo "$KAGGLE_JSON" > ~/.kaggle/kaggle.json
-    chmod 600 ~/.kaggle/kaggle.json
-
 # Assegna dinamicamente i nomi delle colonne
 col_names = [
     "N. conc.", "Data estr.",
@@ -47,17 +41,12 @@ if os.path.exists(csv_path):
         df_existing = pd.read_csv(csv_path)
         df_existing["Data estr."] = pd.to_datetime(df_existing["Data estr."], dayfirst=True)
     except pd.errors.EmptyDataError:
-        # file esistente ma vuoto: crea DataFrame con le colonne giuste
         df_existing = pd.DataFrame(columns=df_html.columns)
 else:
     df_existing = pd.DataFrame(columns=df_html.columns)
 
 # === Step 4: Confronta e unisci solo le nuove estrazioni ===
-if not df_existing.empty:
-    ultima_data = df_existing["Data estr."].max()
-else:
-    ultima_data = pd.to_datetime("1997-01-01", dayfirst=True)
-
+ultima_data = df_existing["Data estr."].max() if not df_existing.empty else pd.to_datetime("1997-01-01", dayfirst=True)
 df_nuove = df_html[df_html["Data estr."] > ultima_data]
 
 if not df_nuove.empty:
