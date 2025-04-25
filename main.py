@@ -30,12 +30,23 @@ df_html = pd.read_html(str(table))[0]
 df_html.columns = ["N. conc.", "Data estr.", "1°", "2°", "3°", "4°", "5°", "6°", "J", "SS"]
 df_html["Data estr."] = pd.to_datetime(df_html["Data estr."], dayfirst=True)
 
-# === Carica dataset esistente ===
-if os.path.exists("estrazioni.csv"):
-    df_existing = pd.read_csv("estrazioni.csv")
-    df_existing["Data estr."] = pd.to_datetime(df_existing["Data estr."], dayfirst=True)
-else:
-    df_existing = pd.DataFrame(columns=df_html.columns)
+# === Estrai la tabella e caricala in un DataFrame ===
+table = soup.find("table")
+df_html = pd.read_html(str(table))[0]
+
+# Lista completa dei nomi possibili (10 colonne)
+col_names = [
+    "N. conc.",
+    "Data estr.",
+    "1°", "2°", "3°", "4°", "5°", "6°",
+    "J", "SS"
+]
+
+# Assegno solo quante ne servono
+df_html.columns = col_names[:len(df_html.columns)]
+
+# Continua con la conversione della data e il resto del flusso...
+df_html["Data estr."] = pd.to_datetime(df_html["Data estr."], dayfirst=True)
 
 # === Confronta e aggiorna ===
 ultima_data = df_existing["Data estr."].max() if not df_existing.empty else pd.to_datetime("1997-01-01")
