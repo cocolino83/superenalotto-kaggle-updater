@@ -23,8 +23,11 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Installa dipendenze
-        run: pip install pandas requests beautifulsoup4 kaggle
+          # Step 3: Installa le dipendenze
+      - name: Installa le dipendenze
+        run: |
+         python -m pip install --upgrade pip
+         pip install pandas requests beautifulsoup4 kaggle lxml html5lib
 
       - name: Crea la cartella .kaggle e salva kaggle.json
         run: |
