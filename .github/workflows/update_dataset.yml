@@ -1,0 +1,29 @@
+name: Aggiornamento SuperEnalotto su Kaggle
+
+on:
+  push:
+    branches:
+      - main  # Esegui quando viene fatto push sul ramo 'main'
+  schedule:
+    - cron: "0 0 * * *"  # Esegui ogni giorno a mezzanotte (UTC)
+
+jobs:
+  update_dataset:
+    runs-on: ubuntu-latest
+
+    steps:
+    # Step 1: Checkout del repository
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    # Step 2: Configura Kaggle (salva il file kaggle.json dal secret)
+    - name: Salva il file kaggle.json dal secret
+      run: |
+        echo "$KAGGLE_JSON" > ~/.kaggle/kaggle.json
+        chmod 600 ~/.kaggle/kaggle.json
+      env:
+        KAGGLE_JSON: ${{ secrets.KAGGLE_JSON }}
+
+    # Step 3: Esegui lo script Python
+    - name: Esegui lo script Python
+      run: python main.py
