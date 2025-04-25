@@ -8,7 +8,21 @@ on:
     - cron: "0 0 * * *"  # Esegue ogni giorno a mezzanotte UTC
 
 jobs:
-  update_dataset:
+    runs-on: ubuntu-latest
+    
+    jobs:
+    update_dataset:
+     runs-on: ubuntu-latest
+
+    # Espone il secret a tutti gli step del job
+    env:
+      KAGGLE_JSON: ${{ secrets.KAGGLE_JSON }}
+
+
+    # Espone il secret a tutti gli step del job
+    env:
+      KAGGLE_JSON: ${{ secrets.KAGGLE_JSON }}
+
     runs-on: ubuntu-latest
 
     # Espone il secret a *tutti* gli step
