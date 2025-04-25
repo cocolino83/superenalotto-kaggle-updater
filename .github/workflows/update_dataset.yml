@@ -2,72 +2,40 @@ name: Aggiornamento SuperEnalotto su Kaggle
 
 on:
   push:
-    branches:
-      - main        # Trigger su push al ramo main
+    branches: [ main ]
   schedule:
-    - cron: "0 0 * * *"  # Esegue ogni giorno a mezzanotte UTC
+    - cron: "0 0 * * *"  # Ogni giorno a mezzanotte UTC
 
 jobs:
+  update_dataset:
     runs-on: ubuntu-latest
-    
-    jobs:
-    update_dataset:
-     runs-on: ubuntu-latest
-
-    # Espone il secret a tutti gli step del job
-    env:
-      KAGGLE_JSON: ${{ secrets.KAGGLE_JSON }}
-
-
-    # Espone il secret a tutti gli step del job
-    env:
-      KAGGLE_JSON: ${{ secrets.KAGGLE_JSON }}
-
-    runs-on: ubuntu-latest
-
-    # Espone il secret a *tutti* gli step
     env:
       KAGGLE_JSON: ${{ secrets.KAGGLE_JSON }}
 
     steps:
-      # 1) Clona il repository
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # 2) Imposta Python 3.10
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
-      # 3) Installa le dipendenze (inclusi lxml e html5lib)
       - name: Installa dipendenze
         run: |
           python -m pip install --upgrade pip
           pip install pandas requests beautifulsoup4 kaggle lxml html5lib
 
-      # 4) Crea ~/.kaggle e salva il file kaggle.json dal secret
       - name: Configura Kaggle credentials
         run: |
           mkdir -p ~/.kaggle
           echo "$KAGGLE_JSON" > ~/.kaggle/kaggle.json
           chmod 600 ~/.kaggle/kaggle.json
 
-      # 5) DEBUG: verifica presenza dei file
-      - name: Verifica presenza di kaggle.json
+      - name: Verifica presenza e contenuto di kaggle.json  # debug
         run: |
-          echo "File ~/.kaggle/kaggle.json:"
-          ls -l ~/.kaggle/kaggle.json || echo "→ Non trovato"
-          echo "File ~/.config/kaggle/kaggle.json:"
-          ls -l ~/.config/kaggle/kaggle.json || echo "→ Non trovato"
+          ls -l ~/.kaggle/kaggle.json
+          sed -E 's/"key"\s*:\s*"[A-Za-z0-9]+"/"key":"****"/' ~/.kaggle/kaggle.json
 
-      # 6) DEBUG: mostra contenuto (mascherato) di kaggle.json
-      - name: Debug: mostra username in kaggle.json
-        run: |
-          echo "---- INIZIO ~/.kaggle/kaggle.json ----"
-          sed -E 's/"key"[[:space:]]*:[[:space:]]*"[A-Za-z0-9]+"/"key":"****"/' ~/.kaggle/kaggle.json
-          echo "---- FINE ~/.kaggle/kaggle.json ----"
-
-      # 7) Esegui lo script Python
       - name: Esegui lo script di aggiornamento
         run: python main.py
