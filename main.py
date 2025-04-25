@@ -28,7 +28,7 @@ df_nuove = df_html[df_html["Data estr."] > ultima_data]
 
 if not df_nuove.empty:
     df_updated = pd.concat([df_existing, df_nuove], ignore_index=True)
-    df_updated.to_csv("estrazioni.csv", index=False)
+    df_updated.to_html("estrazioni.html", index=False)
 
     print(f"✅ Aggiornato con {len(df_nuove)} nuove righe")
 
