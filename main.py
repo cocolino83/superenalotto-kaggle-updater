@@ -1,9 +1,23 @@
+import os
+import json
+
+# === Step 0: Scrive il file kaggle.json a partire dalla variabile d'ambiente ===
+kaggle_secret = os.environ.get("KAGGLE_JSON")
+if kaggle_secret:
+    kaggle_path = "/root/.config/kaggle"
+    os.makedirs(kaggle_path, exist_ok=True)
+    with open(f"{kaggle_path}/kaggle.json", "w") as f:
+        f.write(kaggle_secret)
+    os.chmod(f"{kaggle_path}/kaggle.json", 0o600)
+else:
+    raise ValueError("❌ ERRORE: Variabile d'ambiente KAGGLE_JSON non trovata")
+
+# === Importa librerie principali ===
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
 from kaggle.api.kaggle_api_extended import KaggleApi
 import datetime
-import os
 
 # === Scarica HTML dal sito ufficiale ===
 url = "http://www.estrazionilottooggi.it/superenalotto/Archivio-superenalotto-2025"
@@ -28,6 +42,7 @@ df_nuove = df_html[df_html["Data estr."] > ultima_data]
 
 if not df_nuove.empty:
     df_updated = pd.concat([df_existing, df_nuove], ignore_index=True)
+    df_updated.to_csv("estrazioni.csv", index=False)
     df_updated.to_html("estrazioni.html", index=False)
 
     print(f"✅ Aggiornato con {len(df_nuove)} nuove righe")
