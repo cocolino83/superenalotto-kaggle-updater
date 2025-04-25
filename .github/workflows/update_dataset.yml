@@ -14,7 +14,7 @@ jobs:
     steps:
     # Step 1: Checkout del repository
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v2
 
     # Step 2: Setup Python
     - name: Setup Python
@@ -22,12 +22,9 @@ jobs:
       with:
         python-version: 3.10
 
-
     # Step 3: Installa le dipendenze
     - name: Installa le dipendenze
-      run: |
-        python -m pip install --upgrade pip
-        pip install pandas requests beautifulsoup4 kaggle
+      run: pip install pandas requests beautifulsoup4 kaggle
 
     # Step 4: Crea la cartella .kaggle e salva il file kaggle.json dal secret
     - name: Crea la cartella .kaggle e salva il file kaggle.json dal secret
