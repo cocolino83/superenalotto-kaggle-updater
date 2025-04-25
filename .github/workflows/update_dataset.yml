@@ -17,8 +17,9 @@ jobs:
       uses: actions/checkout@v2
 
     # Step 2: Configura Kaggle (salva il file kaggle.json dal secret)
-    - name: Salva il file kaggle.json dal secret
+    - name: Crea la cartella .kaggle e salva il file kaggle.json dal secret
       run: |
+        mkdir -p ~/.kaggle
         echo "$KAGGLE_JSON" > ~/.kaggle/kaggle.json
         chmod 600 ~/.kaggle/kaggle.json
       env:
