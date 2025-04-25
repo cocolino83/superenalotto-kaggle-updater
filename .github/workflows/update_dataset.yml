@@ -10,31 +10,27 @@ on:
 jobs:
   update_dataset:
     runs-on: ubuntu-latest
+    env:
+      # Rende disponibile il secret a *tutti* i passi del job
+      KAGGLE_JSON: ${{ secrets.KAGGLE_JSON }}
 
     steps:
-    # Step 1: Checkout del repository
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    # Step 2: Setup Python
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.11"
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
 
-    # Step 3: Installa le dipendenze
-    - name: Installa le dipendenze
-      run: pip install pandas requests beautifulsoup4 kaggle
+      - name: Installa dipendenze
+        run: pip install pandas requests beautifulsoup4 kaggle
 
-    # Step 4: Crea la cartella .kaggle e salva il file kaggle.json dal secret
-    - name: Crea la cartella .kaggle e salva il file kaggle.json dal secret
-      run: |
-        mkdir -p ~/.kaggle
-        echo "$KAGGLE_JSON" > ~/.kaggle/kaggle.json
-        chmod 600 ~/.kaggle/kaggle.json
-      env:
-        KAGGLE_JSON: ${{ secrets.KAGGLE_JSON }}
+      - name: Crea la cartella .kaggle e salva kaggle.json
+        run: |
+          mkdir -p ~/.kaggle
+          echo "$KAGGLE_JSON" > ~/.kaggle/kaggle.json
+          chmod 600 ~/.kaggle/kaggle.json
 
-    # Step 5: Esegui lo script Python
-    - name: Esegui lo script Python
-      run: python main.py
+      - name: Esegui lo script Python
+        run: python main.py
