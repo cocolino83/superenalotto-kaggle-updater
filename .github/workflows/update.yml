@@ -2,27 +2,36 @@ name: Aggiorna dataset Superenalotto ogni giorno
 
 on:
   schedule:
-    - cron: '0 5 * * *'  # ogni giorno alle 5:00 UTC
-  workflow_dispatch:
+    - cron: '0 8 * * *'  # Ogni giorno alle 08:00 UTC
+  workflow_dispatch:     # Permette avvio manuale
 
 jobs:
   update:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repository
+      - name: 📥 Clona il repository
         uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: 🐍 Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Scrivi kaggle.json
+      - name: 📦 Installa le dipendenze
         run: |
-          mkdir -p ~/.kaggle
+          python -m pip install --upgrade pip
+          pip install pandas requests beautifulsoup4 kaggle
+
+      - name: 🔐 Scrivi kaggle.json da secret
+        run: |
+          mkdir -p ~/.config/kaggle
+          echo "${{ secrets.KAGGLE_JSON }}" > ~/.config/kaggle/kaggle.json
+          chmod 600 ~/.config/kaggle/kaggle.json
+
+      - name: 🚀 Esegui lo script Python
+        run: python main.py
+
           echo "${{ secrets.KAGGLE_JSON }}" > ~/.kaggle/kaggle.json
           chmod 600 ~/.kaggle/kaggle.json
 
